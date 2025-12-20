@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obsidian Marketplace</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #1e293b;
+            --bg-medium: #334155;
+            --bg-light: #475569;
+            --text-white: #e2e8f0; /* Slightly off-white for better contrast */
+            --accent-blue: #3b82f6;
+            --border-color: #475569;
+            --product-card-bg: #2d3a4b;
+            --hover-light: #5a6b82;
+            --button-text: #ffffff;
+            --placeholder-color: #94a3b8;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--bg-medium);
+            padding: 1rem 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent-blue);
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .search-bar {
+            flex-grow: 1;
+            max-width: 600px;
+            display: flex;
+            border-radius: 8px;
+            overflow: visible; /* Changed to visible to allow autocomplete to show */
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            position: relative; /* Added for autocomplete positioning */
+        }
+
+        .search-bar input {
+            flex-grow: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: transparent;
+            color: var(--text-white);
+            font-size: 1rem;
+            outline: none;
+            padding-right: 0;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--placeholder-color);
+        }
+
+        .search-bar button {
+            background-color: var(--accent-blue);
+            color: var(--button-text);
+            border: none;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .search-bar button:hover {
+            background-color: #277acd;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .header-icons a {
+            color: var(--text-white);
+            font-size: 1.4rem;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.2s ease;
+        }
+
+        .header-icons a:hover {
+            color: var(--accent-blue);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.75rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: var(--bg-light);
+            padding: 0.7rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        nav a {
+            color: var(--text-white);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            margin: 0 0.5rem;
+            border-radius: 5px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            display: inline-block;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: var(--accent-blue);
+            color: var(--button-text);
+        }
+        
+        main {
+            flex-grow: 1;
+            padding: 2rem 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--bg-medium) 0%, var(--bg-dark) 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://via.placeholder.com/1200x300/334155/475569?text=Amazing+Deals') no-repeat center center/cover;
+            filter: blur(2px) brightness(0.8);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-white);
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero button {
+            background-color: var(--accent-blue);
+            color: var(--button-text);
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .hero button:hover {
+            background-color: #277acd;
+            transform: translateY(-2px);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            background-color: var(--product-card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background-color: var(--bg-medium);
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer; /* Add cursor pointer to indicate clickability */
+        }
+
+        .product-info {
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-white);
+            min-height: 2.4em; /* Ensure consistent height for titles */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-info p {
+            font-size: 0.9rem;
+            color: var(--text-white);
+            margin-bottom: 1rem;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+        }
+
+        .product-card button {
+            background-color: var(--accent-blue);
+            color: var(--button-text);
+            border: none;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .product-card button:hover {
+            background-color: #277acd;
+        }
+
+        footer {
+            background-color: var(--bg-medium);
+            color: var(--text-white);
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 2000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.7); /* Black w/ opacity */
+            backdrop-filter: blur(5px); /* Blur effect */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--bg-medium);
+            margin: auto;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            color: var(--text-white);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Image Modal specific styles */
+        .image-modal-content {
+            background-color: var(--bg-medium);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 80%;
+            max-height: 80%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .image-modal-content img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 5px;
+        }
+
+        .image-modal-close {
+            color: var(--text-white);
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .image-modal-close:hover,
+        .image-modal-close:focus {
+            color: var(--accent-blue);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-button {
+            color: var(--text-white);
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--accent-blue);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-content h2 {
+            color: var(--accent-cyan);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        .modal-content label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--text-white);
+        }
+
+        .modal-content input[type="text"],
+        .modal-content input[type="email"],
+        .modal-content input[type="password"] {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--bg-light);
+            color: var(--text-white);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .modal-content input[type="text"]:focus,
+        .modal-content input[type="email"]:focus,
+        .modal-content input[type="password"]:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(var(--accent-blue), 0.5);
+        }
+
+        .modal-content button {
+            background-color: var(--accent-purple);
+            color: var(--button-text);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            width: 100%;
+            transition: background-color 0.2s ease;
+        }
+
+        .modal-content button:hover {
+            background-color: #6d3ecf;
+        }
+
+        .modal-content p {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .modal-content p a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .modal-content p a:hover {
+            color: var(--accent-cyan);
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+            flex-shrink: 0;
+        }
+
+        .cart-item-details {
+            flex-grow: 1;
+        }
+
+        .cart-item-details h4 {
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+            color: var(--text-white);
+        }
+
+        .cart-item-details p {
+            font-size: 0.9rem;
+            color: var(--placeholder-color);
+            margin: 0;
+            text-align: left;
+        }
+
+        .cart-item-price {
+            font-weight: bold;
+            color: var(--accent-blue);
+            flex-shrink: 0;
+        }
+
+        .cart-total {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--accent-cyan);
+        }
+
+        /* Autocomplete List Styles */
+        .autocomplete-list {
+            position: absolute;
+            top: 100%; /* Position below the input */
+            left: 0;
+            right: 0;
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .autocomplete-list-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            color: var(--text-white);
+            transition: background-color 0.2s ease;
+        }
+
+        .autocomplete-list-item:hover,
+        .autocomplete-list-item.active {
+            background-color: var(--hover-light);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 1rem;
+            }
+
+            .logo {
+                text-align: center;
+                margin-bottom: 1rem;
+            }
+
+            .search-bar {
+                margin-bottom: 1rem;
+                max-width: 100%;
+            }
+
+            .header-icons {
+                justify-content: center;
+                gap: 1rem;
+            }
+
+            nav {
+                padding: 0.5rem 1rem;
+            }
+
+            nav a {
+                padding: 0.4rem 0.8rem;
+                margin: 0 0.3rem;
+                font-size: 0.9rem;
+            }
+
+            main {
+                padding: 1.5rem 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+
+            .product-card img {
+                height: 150px;
+            }
+
+            .product-info h3 {
+                font-size: 1rem;
+            }
+
+            .product-price {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                padding: 2rem 1rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 0.9rem;
+            }
+
+            .hero button {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .product-card img {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="#" class="logo">Obsidian Market</a>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Искать товары...">
+            <button id="search-button"><i class="fas fa-search"></i></button>
+            <ul id="autocomplete-list" class="autocomplete-list" style="display: none;"></ul>
+        </div>
+        <div class="header-icons">
+            <a href="#" id="profile-icon"><i class="fas fa-user"></i></a>
+            <a href="#"><i class="fas fa-heart"></i></a>
+            <a id="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count" id="cart-item-count">0</span>
+            </a>
+        </div>
+    </header>
+
+    <nav>
+        <a href="#" class="active" data-category="all">Все категории</a>
+        <a href="#" data-category="Электроника">Электроника</a>
+        <a href="#" data-category="Одежда">Одежда</a>
+        <a href="#" data-category="Дом и сад">Дом и сад</a>
+        <a href="#" data-category="Спорт">Спорт</a>
+        <a href="#" data-category="Книги и хобби">Книги и хобби</a>
+        <a href="#" data-category="Автотовары">Автотовары</a>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Огромный выбор товаров для вашего дома и жизни!</h1>
+                <p>Найдите все, что вам нужно, от электроники до уникальных предметов интерьера, по лучшим ценам.</p>
+                <button onclick="scrollToProducts()">Смотреть товары</button>
+            </div>
+        </section>
+
+        <h2>Популярные товары</h2>
+        <div class="product-grid" id="product-list">
+            <!-- Product cards will be inserted here by JavaScript -->
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Obsidian Market. Все права защищены.</p>
+        <p>Наш адрес: ул. Обсидиановая, 1, Город Будущего</p>
+    </footer>
+
+    <!-- Registration Modal -->
+    <div id="registrationModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Регистрация</h2>
+            <form>
+                <label for="reg-username">Имя пользователя:</label>
+                <input type="text" id="reg-username" name="reg-username" required>
+
+                <label for="reg-email">Email:</label>
+                <input type="email" id="reg-email" name="reg-email" required>
+
+                <label for="reg-password">Пароль:</label>
+                <input type="password" id="reg-password" name="reg-password" required>
+
+                <label for="reg-confirm-password">Подтвердите пароль:</label>
+                <input type="password" id="reg-confirm-password" name="reg-confirm-password" required>
+
+                <button type="submit">Зарегистрироваться</button>
+            </form>
+            <p>Уже есть аккаунт? <a href="#">Войти</a></p>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button" id="cart-close-button">&times;</span>
+            <h2>Ваша корзина</h2>
+            <div id="cart-items-container">
+                <!-- Cart items will be rendered here -->
+            </div>
+            <div id="cart-total" class="cart-total">
+                <span>Итого:</span>
+                <span id="cart-total-price">0 ₽</span>
+            </div>
+            <button>Оформить заказ</button>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal" style="display: none;">
+        <div class="image-modal-content">
+            <span class="image-modal-close">&times;</span>
+            <img src="" alt="Увеличенное изображение товара" id="modalImage">
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            { id: 1, name: "Игровой ноутбук Xcalibur", description: "Мощный ноутбук для геймеров и профессионалов, с новейшим процессором и видеокартой.", price: 120000, image: "https://via.placeholder.com/300x200/334155/475569?text=Игровой+Ноутбук", category: "Электроника" },
+            { id: 2, name: "Смартфон Nova Pro 5G", description: "Флагманский смартфон с потрясающей камерой и быстрой зарядкой.", price: 45000, image: "https://via.placeholder.com/300x200/334155/475569?text=Смартфон+Nova", category: "Электроника" },
+            { id: 3, name: "Беспроводные наушники AstroBass", description: "Погрузитесь в музыку с глубокими басами и чистым звуком.", price: 8500, image: "https://via.placeholder.com/300x200/334155/475569?text=Наушники+Astro", category: "Электроника" },
+            { id: 4, name: "Умные часы TimeFlow", description: "Следите за здоровьем и уведомлениями, стильный компаньон на каждый день.", price: 15000, image: "https://via.placeholder.com/300x200/334155/475569?text=Умные+Часы", category: "Электроника" },
+            { id: 5, name: "Электрический чайник SmartKettle", description: "Управляйте чайником со смартфона, настройте температуру для заваривания чая.", price: 3200, image: "https://via.placeholder.com/300x200/334155/475569?text=Умный+Чайник", category: "Дом и сад" },
+            { id: 6, name: "Фитнес-браслет PulseTrack", description: "Отслеживайте активность, пульс и сон. Идеально для занятий спортом.", price: 2800, image: "https://via.placeholder.com/300x200/334155/475569?text=Фитнес-Браслет", category: "Спорт" },
+            { id: 7, name: "Портативная колонка WaveSound", description: "Мощный звук в компактном корпусе, водонепроницаемый дизайн.", price: 6000, image: "https://via.placeholder.com/300x200/334155/475569?text=Портативная+Колонка", category: "Электроника" },
+            { id: 8, name: "Робот-пылесос AutoClean X5", description: "Самостоятельно убирает ваш дом, мощный и тихий.", price: 28000, image: "https://via.placeholder.com/300x200/334155/475569?text=Робот-Пылесос", category: "Дом и сад" },
+            { id: 9, name: "Мужская футболка 'Космос'", description: "Стильная футболка с уникальным принтом для повседневного образа.", price: 1500, image: "https://via.placeholder.com/300x200/334155/475569?text=Футболка+Космос", category: "Одежда" },
+            { id: 10, name: "Женское платье 'Летний Бриз'", description: "Легкое и воздушное платье для жарких дней, идеально для прогулок.", price: 3000, image: "https://via.placeholder.com/300x200/334155/475569?text=Платье+Лето", category: "Одежда" },
+            { id: 11, name: "Набор садовых инструментов", description: "Все необходимое для ухода за вашим садом: лопатка, грабли, секатор.", price: 2500, image: "https://via.placeholder.com/300x200/334155/475569?text=Садовые+Инструменты", category: "Дом и сад" },
+            { id: 12, name: "Беговые кроссовки 'Скорость'", description: "Легкие и амортизирующие кроссовки для комфортных пробежек.", price: 7000, image: "https://via.placeholder.com/300x200/334155/475569?text=Кроссовки+Бег", category: "Спорт" }
+        ];
+
+        let cartItems = []; // Array to store items in the cart
+        let currentActiveItem = -1; // For autocomplete navigation
+
+        function updateCartItemCount() {
+            document.getElementById('cart-item-count').textContent = cartItems.length;
+        }
+
+        function formatPrice(price) {
+            return price.toLocaleString('ru-RU') + ' ₽';
+        }
+
+        function renderProducts(filteredProducts) {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = ''; // Clear existing products
+
+            if (filteredProducts.length === 0) {
+                productList.innerHTML = '<p style="text-align: center; width: 100%;">В данной категории пока нет товаров.</p>';
+                return;
+            }
+
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('product-card');
+                productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" onclick="openImageModal('${product.image}')">
+                    <div class="product-info">
+                        <h3>${product.name}</h3>
+                        <p>${product.description}</p>
+                        <div class="product-price">${formatPrice(product.price)}</div>
+                        <button onclick="addToCart(${product.id})">В корзину</button>
+                    </div>
+                `;
+                productList.appendChild(productCard);
+            });
+        }
+
+        function addToCart(productId) {
+            const productToAdd = products.find(p => p.id === productId);
+            if (productToAdd) {
+                cartItems.push(productToAdd);
+                updateCartItemCount();
+                alert(`Товар "${productToAdd.name}" добавлен в корзину!`);
+                renderCartItems(); // Update cart modal content
+            }
+        }
+
+        function renderCartItems() {
+            const cartItemsContainer = document.getElementById('cart-items-container');
+            cartItemsContainer.innerHTML = ''; // Clear existing cart items
+            let totalCartPrice = 0;
+
+            if (cartItems.length === 0) {
+                cartItemsContainer.innerHTML = '<p style="text-align: center; margin-top: 1rem;">Ваша корзина пуста.</p>';
+            } else {
+                cartItems.forEach(item => {
+                    const cartItemDiv = document.createElement('div');
+                    cartItemDiv.classList.add('cart-item');
+                    cartItemDiv.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="cart-item-details">
+                            <h4>${item.name}</h4>
+                            <p>${formatPrice(item.price)}</p>
+                        </div>
+                        <!-- Add quantity controls or remove button later -->
+                    `;
+                    cartItemsContainer.appendChild(cartItemDiv);
+                    totalCartPrice += item.price;
+                });
+            }
+            document.getElementById('cart-total-price').textContent = formatPrice(totalCartPrice);
+        }
+
+        function scrollToProducts() {
+            document.getElementById('product-list').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function filterProducts(category) {
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            let currentCategoryLink = document.querySelector(`[data-category="${category}"]`);
+            if (currentCategoryLink) {
+                currentCategoryLink.classList.add('active');
+            }
+
+            let filtered = [];
+            if (category === 'all') {
+                filtered = products;
+            } else {
+                filtered = products.filter(product => product.category === category);
+            }
+            renderProducts(filtered);
+        }
+
+        function performSearch(searchTerm = '') {
+            const searchInput = document.getElementById('search-input');
+            const actualSearchTerm = searchTerm.toLowerCase() || searchInput.value.toLowerCase();
+            
+            const filteredProducts = products.filter(product => {
+                return product.name.toLowerCase().includes(actualSearchTerm) || 
+                       product.description.toLowerCase().includes(actualSearchTerm);
+            });
+            renderProducts(filteredProducts);
+            hideAutocompleteList(); // Hide autocomplete after search
+            searchInput.value = searchTerm || searchInput.value; // Set input value if search was from autocomplete
+        }
+
+        // Autocomplete functionality
+        const searchInput = document.getElementById('search-input');
+        const autocompleteList = document.getElementById('autocomplete-list');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            if (searchTerm.length === 0) {
+                hideAutocompleteList();
+                return;
+            }
+
+            const matchedProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm)
+            );
+            
+            displayAutocompleteList(matchedProducts);
+        });
+
+        searchInput.addEventListener('keydown', function(e) {
+            const items = autocompleteList.querySelectorAll('.autocomplete-list-item');
+            if (items.length === 0) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault(); // Prevent cursor movement in input
+                currentActiveItem = (currentActiveItem + 1) % items.length;
+                setActiveItem(items);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault(); // Prevent cursor movement in input
+                currentActiveItem = (currentActiveItem - 1 + items.length) % items.length;
+                setActiveItem(items);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (currentActiveItem > -1) {
+                    performSearch(items[currentActiveItem].textContent); // Call performSearch with the text of the active item
+                } else {
+                    performSearch(); // If nothing selected, perform regular search
+                }
+            } else if (e.key === 'Escape') {
+                hideAutocompleteList();
+            }
+        });
+
+        function displayAutocompleteList(matchedProducts) {
+            autocompleteList.innerHTML = '';
+            currentActiveItem = -1; // Reset active item
+
+            if (matchedProducts.length === 0) {
+                hideAutocompleteList();
+                return;
+            }
+
+            matchedProducts.slice(0, 5).forEach(product => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('autocomplete-list-item');
+                listItem.textContent = product.name;
+                listItem.addEventListener('click', () => {
+                    searchInput.value = product.name; // Set input value to selected product name
+                    performSearch(product.name); // Perform search for the selected product
+                    hideAutocompleteList();
+                });
+                autocompleteList.appendChild(listItem);
+            });
+
+            autocompleteList.style.display = 'block';
+        }
+
+        function hideAutocompleteList() {
+            autocompleteList.style.display = 'none';
+            autocompleteList.innerHTML = '';
+            currentActiveItem = -1;
+        }
+
+        function setActiveItem(items) {
+            items.forEach((item, index) => {
+                if (index === currentActiveItem) {
+                    item.classList.add('active');
+                    searchInput.value = item.textContent; // Update input with active item text
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // Close autocomplete when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !autocompleteList.contains(e.target)) {
+                hideAutocompleteList();
+            }
+        });
+
+        // Modal functionality
+        const profileIcon = document.getElementById('profile-icon');
+        const registrationModal = document.getElementById('registrationModal');
+        const regCloseButton = registrationModal.querySelector('.close-button');
+
+        const cartIcon = document.getElementById('cart-icon');
+        const cartModal = document.getElementById('cartModal');
+        const cartCloseButton = document.getElementById('cart-close-button');
+
+        // Image Modal elements
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const imageModalCloseButton = imageModal.querySelector('.image-modal-close');
+
+        profileIcon.addEventListener('click', (e) => {
+            e.preventDefault();
+            registrationModal.style.display = 'flex';
+        });
+
+        regCloseButton.addEventListener('click', () => {
+            registrationModal.style.display = 'none';
+        });
+
+        cartIcon.addEventListener('click', (e) => {
+            e.preventDefault();
+            renderCartItems(); // Render items before showing the cart
+            cartModal.style.display = 'flex';
+        });
+
+        cartCloseButton.addEventListener('click', () => {
+            cartModal.style.display = 'none';
+        });
+
+        // Function to open image modal
+        function openImageModal(imageUrl) {
+            modalImage.src = imageUrl;
+            imageModal.style.display = 'flex';
+        }
+
+        // Function to close image modal
+        function closeImageModal() {
+            imageModal.style.display = 'none';
+            modalImage.src = ''; // Clear image source
+        }
+
+        imageModalCloseButton.addEventListener('click', closeImageModal);
+
+        // Close modals when clicking outside of them
+        window.addEventListener('click', (e) => {
+            if (e.target === registrationModal) {
+                registrationModal.style.display = 'none';
+            }
+            if (e.target === cartModal) {
+                cartModal.style.display = 'none';
+            }
+            if (e.target === imageModal) {
+                closeImageModal();
+            }
+        });
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts(products); // Render all products initially
+            updateCartItemCount(); // Set initial cart count
+
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const category = e.target.dataset.category;
+                    filterProducts(category);
+                });
+            });
+
+            // Event listeners for search functionality
+            document.getElementById('search-button').addEventListener('click', () => performSearch());
+            // Keypress Enter is now handled by keydown listener for autocomplete
+        });
+    </script>
+</body>
+</html>
